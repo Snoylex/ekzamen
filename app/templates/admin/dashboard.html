@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Админ-панель{% endblock %}
+
+{% block content %}
+<div class="container pt-5">
+    <h1 class="mb-5 text-center">Админ-панель ресторана «Кущай вкусно»</h1>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <a href="{{ url_for('admin.admin_categories') }}" class="btn btn-primary btn-lg w-100 py-4">
+                <h4>Категории меню</h4>
+                <small>Добавить / изменить / удалить</small>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('admin.admin_dishes') }}" class="btn btn-success btn-lg w-100 py-4">
+                <h4>Блюда</h4>
+                <small>Управление позициями меню</small>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('admin.admin_reviews') }}" class="btn btn-warning btn-lg w-100 py-4">
+                <h4>Отзывы гостей</h4>
+                <small>Модерация отзывов</small>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

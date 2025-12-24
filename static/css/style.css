@@ -1,0 +1,60 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Georgia', serif;
+    color: #333;
+}
+
+.navbar {
+    background-color: #4a148c !important;
+}
+
+.navbar-brand {
+    font-size: 1.8rem;
+    font-weight: bold;
+    font-style: italic;
+}
+
+h1, h2, h5 {
+    color: #4a148c;
+    font-weight: 600;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+.card-img-top {
+    height: 250px;
+    object-fit: cover;
+}
+
+.rating-stars {
+    color: #ffc107;
+    font-size: 1.5rem;
+}
+
+.accordion-button {
+    background-color: #4a148c !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #6a1b9a !important;
+}
+
+footer {
+    margin-top: 100px;
+    padding: 40px 0;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+}

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Отзывы{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Отзывы наших гостей</h1>
+    
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if current_sort == 'date_desc' %}
+                По дате (сначала новые)
+            {% elif current_sort == 'date_asc' %}
+                По дате (сначала старые)
+            {% elif current_sort == 'rating_desc' %}
+                По оценке (высокие сначала)
+            {% elif current_sort == 'rating_asc' %}
+                По оценке (низкие сначала)
+            {% else %}
+                По популярности
+            {% endif %}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+            <li><a class="dropdown-item {% if current_sort == 'date_desc' %}active{% endif %}" href="{{ url_for('main.reviews', sort='date_desc') }}">По дате (сначала новые)</a></li>
+            <li><a class="dropdown-item {% if current_sort == 'date_asc' %}active{% endif %}" href="{{ url_for('main.reviews', sort='date_asc') }}">По дате (сначала старые)</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item {% if current_sort == 'rating_desc' %}active{% endif %}" href="{{ url_for('main.reviews', sort='rating_desc') }}">По оценке (высокие сначала)</a></li>
+            <li><a class="dropdown-item {% if current_sort == 'rating_asc' %}active{% endif %}" href="{{ url_for('main.reviews', sort='rating_asc') }}">По оценке (низкие сначала)</a></li>
+        </ul>
+    </div>
+</div>
+
+    <!-- Общая оценка -->
+    <div class="text-center mb-5 p-4 bg-light rounded shadow-sm">
+        <h2 class="display-4 fw-bold text-primary">{{ average_rating }}</h2>
+        <div class="mb-3">
+            {% for i in range(5) %}
+                {% if i < average_rating %}
+                    <span class="text-warning fs-2">★</span>
+                {% else %}
+                    {% set half = average_rating - i %}
+                    {% if half > 0 and half < 1 %}
+                        <span class="text-warning fs-2">⭐</span> {}
+                    {% else %}
+                        <span class="text-muted fs-2">☆</span>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <p class="text-muted fs-5">
+            На основе {{ total_reviews }} {% if total_reviews == 1 %}отзыва{% elif total_reviews % 10 in [2,3,4] and total_reviews not in [12,13,14] %}отзывов{% else %}отзыва{% endif %}
+        </p>
+    </div>
+
+    <div class="text-end mb-4">
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.add_review') }}" class="btn btn-success btn-lg">
+                ✍️ Оставить свой отзыв
+            </a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg">
+                Войти и оставить отзыв
+            </a>
+        {% endif %}
+    </div>
+
+    <hr class="mb-5">
+
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="card mb-4 shadow-sm {% if current_user.is_authenticated and current_user.id == review.user_id %}border-primary{% endif %}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title mb-1">
+                                {{ review.username }}
+                                {% if current_user.is_authenticated and current_user.id == review.user_id %}
+                                    <span class="badge bg-primary ms-2">Ваш отзыв</span>
+                                {% endif %}
+                            </h5>
+
+                            <div class="mb-3">
+                                {% for i in range(5) %}
+                                    {% if i < review.rating %}
+                                        <span class="text-warning fs-3">★</span>
+                                    {% else %}
+                                        <span class="text-muted fs-3">☆</span>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="text-muted ms-2">{{ review.rating }}/5</span>
+                            </div>
+
+                            <p class="card-text">{{ review.text }}</p>
+
+                            <small class="text-muted">
+                                {{ review.created_at.strftime('%d.%m.%Y в %H:%M') }}
+                            </small>
+                        </div
+
+                        <!-- Кнопки управления — только если это отзыв текущего пользователя -->
+                        {% if current_user.is_authenticated and current_user.id == review.user_id %}
+                            <div class="ms-4">
+                                <a href="{{ url_for('auth.edit_review', review_id=review.id) }}"
+                                   class="btn btn-sm d-block text-success border-0 bg-transparent">
+                                    ✏️ Изменить
+                                </a>
+                                <a href="{{ url_for('auth.delete_review_user', review_id=review.id) }}"
+                                   class="btn btn-sm d-block text-danger border-0 bg-transparent"
+                                   onclick="return confirm('Удалить этот отзыв?')">
+                                    🗑️ Удалить
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        <!-- Кнопка для админа -->
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                            <div class="ms-3">
+                                <a href="{{ url_for('admin.delete_review', review_id=review.id) }}"
+                                   class="btn btn-sm d-block text-danger border-0 bg-transparent"
+                                   onclick="return confirm('Удалить отзыв пользователя {{ review.username }}?')">
+                                    🗑️ Удалить
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <h4 class="text-muted">Отзывов пока нет</h4>
+            {% if current_user.is_authenticated %}
+                <p><a href="{{ url_for('auth.add_review') }}">Оставьте первый отзыв!</a></p>
+            {% else %}
+                <p><a href="{{ url_for('auth.login') }}">Войдите</a>, чтобы оставить отзыв.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

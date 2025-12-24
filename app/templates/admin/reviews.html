@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Отзывы{% endblock %}
+
+{% block content %}
+<div class="container pt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Отзывы наших гостей</h1>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.add_review') }}" class="btn btn-primary btn-lg">
+                Оставить отзыв
+            </a>
+        {% endif %}
+    </div>
+
+    
+
+    <hr class="mb-5">
+
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="card mb-4 shadow-sm {% if current_user.is_authenticated and current_user.id == review.user_id %}border-success border-3{% endif %}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title">
+                                {{ review.username }}
+                                {% if current_user.is_authenticated and current_user.id == review.user_id %}
+                                    <span class="badge bg-success ms-2">Это ваш отзыв!</span>
+                                {% endif %}
+                            </h5>
+
+                            <div class="mb-3">
+                                <span class="text-warning fs-4">
+                                    {% for i in range(review.rating) %}★{% endfor %}
+                                    {% for i in range(5 - review.rating) %}☆{% endfor %}
+                                </span>
+                                <span class="text-muted ms-2">{{ review.rating }}/5</span>
+                            </div>
+
+                            <p class="card-text">{{ review.text }}</p>
+
+                            <small class="text-muted d-block">
+                                Дата: {{ review.created_at.strftime('%d.%m.%Y в %H:%M') }}
+                            </small>
+
+                            
+                        </div>
+
+                        <!-- Кнопки только для владельца -->
+                        {% if current_user.is_authenticated and current_user.id == review.user_id %}
+                            <div class="ms-4">
+                                <a href="{{ url_for('auth.edit_review', review_id=review.id) }}"
+                                   class="btn btn-sm d-block text-success border-0 bg-transparent">
+                                    ✏️ Изменить
+                                </a>
+                                <a href="{{ url_for('auth.delete_review_user', review_id=review.id) }}"
+                                   class="btn btn-sm d-block text-danger border-0 bg-transparent"
+                                   onclick="return confirm('Удалить этот отзыв?')">
+                                    🗑️ Удалить
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        <!-- Кнопка для админа -->
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                            <div class="ms-3">
+                                <a href="{{ url_for('admin.delete_review', review_id=review.id) }}"
+                                   class="btn btn-sm d-block text-danger border-0 bg-transparent"
+                                   onclick="return confirm('Удалить отзыв пользователя {{ review.username }}?')">
+                                    🗑️ Удалить
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <h3 class="text-muted">Отзывов пока нет</h3>
+            {% if current_user.is_authenticated %}
+                <p>Будьте первым! <a href="{{ url_for('auth.add_review') }}">Оставить отзыв</a></p>
+            {% else %}
+                <p><a href="{{ url_for('auth.login') }}">Войдите</a>, чтобы оставить отзыв.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
