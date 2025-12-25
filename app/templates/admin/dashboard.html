@@ -3,27 +3,33 @@
 
 {% block content %}
 <div class="container pt-5">
-    <h1 class="mb-5 text-center">Админ-панель ресторана «Кущай вкусно»</h1>
+    <h1 class="mb-5 text-center text-primary">Админ-панель ресторана "Кущай вкусно"</h1>
     
-    <div class="row g-4">
+    <div class="row g-4 text-center">
         <div class="col-md-4">
-            <a href="{{ url_for('admin.admin_categories') }}" class="btn btn-primary btn-lg w-100 py-4">
-                <h4>Категории меню</h4>
+            <a href="{{ url_for('admin.admin_categories') }}" class="btn btn-primary btn-lg w-100 py-5 shadow-sm">
+                <h4 class="mb-3">Категории меню</h4>
                 <small>Добавить / изменить / удалить</small>
             </a>
         </div>
         <div class="col-md-4">
-            <a href="{{ url_for('admin.admin_dishes') }}" class="btn btn-success btn-lg w-100 py-4">
-                <h4>Блюда</h4>
+            <a href="{{ url_for('admin.admin_dishes') }}" class="btn btn-success btn-lg w-100 py-5 shadow-sm">
+                <h4 class="mb-3">Блюда</h4>
                 <small>Управление позициями меню</small>
             </a>
         </div>
         <div class="col-md-4">
-            <a href="{{ url_for('admin.admin_reviews') }}" class="btn btn-warning btn-lg w-100 py-4">
-                <h4>Отзывы гостей</h4>
-                <small>Модерация отзывов</small>
+            <a href="{{ url_for('admin.list_admin_reviews') }}" class="btn btn-warning btn-lg w-100 py-5 shadow-sm">
+                <h4 class="mb-3">Отзывы гостей</h4>
+                <small>Модерация и удаление отзывов</small>
             </a>
         </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary btn-lg">
+            ← Вернуться на сайт
+        </a>
     </div>
 </div>
 {% endblock %}
